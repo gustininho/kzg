@@ -23,6 +23,13 @@ fn fr_is_zero_works() {
 #[test]
 fn fr_is_one_works() {
     assert!(init(CurveType::BLS12_381));
+    let x = Fr::one();
+    assert!(x.is_one());
+}
+
+#[test]
+fn fr_from_uint64_works (){
+    assert!(init(CurveType::BLS12_381));
     let x = Fr::from_int(1);
     assert!(x.is_one());
 }

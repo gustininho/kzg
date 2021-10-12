@@ -17,5 +17,12 @@ fn alog_2_byte_works() {
 fn fr_is_zero_works() {
     assert!(init(CurveType::BLS12_381));
     let x = Fr::from_int(0);
-    assert!(true);
+    assert!(x.is_zero());
+}
+
+#[test]
+fn fr_is_one_works() {
+    assert!(init(CurveType::BLS12_381));
+    let x = Fr::from_int(1);
+    assert!(x.is_one());
 }

@@ -1,7 +1,7 @@
 
 use ark_poly::Radix2EvaluationDomain;
 use ark_poly::univariate::DensePolynomial as DensePoly;
-use crate::kzg::{fr_from_uint64, FFTSettings};
+use crate::kzg::{FFTSettings};
 use crate::Fr as BlstFr;
 use ark_bls12_381::Fr;
 use crate::utils::{blst_fr_into_pc_fr,Error, pc_fr_into_blst_fr};
@@ -49,6 +49,13 @@ pub (crate) const SCALE2_ROOT_OF_UNITY: [[u64; 4]; 32] = [
 // }
 
 pub fn fft_fr (data: &Vec<BlstFr>, inverse:bool, ffts:&FFTSettings) -> Result<Vec<BlstFr>, Error>{
+    let mut width = 0;
+
+    if ffts.max_width > data.len() as u64{
+        width = data.len()
+    } else {
+        width = ffts.max_width as usize
+    }
 
     let mut datafr = Vec::new();
     let mut dataeval = Vec::new();
@@ -56,9 +63,8 @@ pub fn fft_fr (data: &Vec<BlstFr>, inverse:bool, ffts:&FFTSettings) -> Result<Ve
         datafr.push(blst_fr_into_pc_fr(&x));
     }
 
-
     let poly = DensePoly::from_coefficients_slice(&datafr);
-    let domain = Radix2EvaluationDomain::<Fr>::new(ffts.max_width as usize).unwrap();
+    let domain = Radix2EvaluationDomain::<Fr>::new(width as usize).unwrap();
 
     if inverse {
         let eval = domain.ifft(&poly.coeffs);
@@ -78,6 +84,5 @@ pub fn fft_fr (data: &Vec<BlstFr>, inverse:bool, ffts:&FFTSettings) -> Result<Ve
 }
 
 pub fn fr_are_equal(data1: &BlstFr, data2: &BlstFr) -> bool{
-
     data1 == data2
 }

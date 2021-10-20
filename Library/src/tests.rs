@@ -1,7 +1,6 @@
-// use super::libr::{Fr as BlstFr, P1, P2};
 use crate::fft::fr_are_equal;
 use crate::fft::fft_fr;
-use crate::fft::blst_fr_from_uint64;
+use blst::blst_fr_from_uint64;
 use crate::kzg::{generate_trusted_setup, new_kzg_settings, KZGSettings, FFTSettings, new_fft_settings, fr_from_uint64,
     eval_poly, fr_add, fr_one, commit_to_poly, check_proof_single, new_poly, compute_proof_single, compute_proof_multi,
     fr_mul, check_proof_multi, g1_identity, TooLongPoly};
@@ -133,7 +132,7 @@ pub(crate) fn roundtrip_fft() {
     let mut starting_data = vec![Fr::default(); fft_settings.max_width as usize];
     for i in 0..fft_settings.max_width {
         unsafe {
-            blst_fr_from_uint64(&mut starting_data[i as usize], [i as u64, 0, 0, 0].as_ptr() as u64);
+            blst_fr_from_uint64(&mut starting_data[i as usize], [i, 0, 0, 0].as_ptr());
         }
     }
 
@@ -159,7 +158,7 @@ pub(crate) fn stride_fft() {
     let mut data = vec![Fr::default(); width];
     for i in 0..width {
         unsafe {
-            blst_fr_from_uint64(&mut data[i], [i as u64, 0, 0, 0].as_ptr() as u64);
+            blst_fr_from_uint64(&mut data[i], [i as u64, 0, 0, 0].as_ptr());
         }
     }
 
@@ -167,6 +166,8 @@ pub(crate) fn stride_fft() {
     let result2 = fft_fr(&data, false, &fft_settings2).unwrap();
 
     for i in 0..width {
+        println!("expected {:?}",result1[i]);
+        println!("forward_result {:?}",result2[i]);
         assert!(fr_are_equal(&result1[i], &result2[i]));
     }
 }
@@ -199,17 +200,18 @@ pub(crate)fn inverse_fft() {
     let mut data = vec![Fr::default(); fft_settings.max_width as usize];
     for i in 0..fft_settings.max_width {
         unsafe {
-            blst_fr_from_uint64(&mut data[i as usize], [i as u64, 0, 0, 0].as_ptr() as u64);
+            blst_fr_from_uint64(&mut data[i as usize], [i, 0, 0, 0].as_ptr());
         }
     }
 
     let forward_result = fft_fr(&data, true, &fft_settings).unwrap();
 
     assert_eq!(inv_fft_expected.len(), fft_settings.max_width as usize);
+    
     for i in 0..inv_fft_expected.len() {
         let mut expected: Fr = Fr::default();
         unsafe {
-            blst_fr_from_uint64(&mut expected, inv_fft_expected[i].as_ptr() as u64);
+            blst_fr_from_uint64(&mut expected, inv_fft_expected[i].as_ptr());
         }
         assert!(fr_are_equal(&expected, &forward_result[i]));
     }

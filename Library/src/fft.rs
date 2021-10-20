@@ -8,9 +8,6 @@ use crate::utils::{blst_fr_into_pc_fr,Error, pc_fr_into_blst_fr};
 use ark_poly_commit::UVPolynomial;
 use ark_poly::EvaluationDomain;
 
-// #[derive(Debug, PartialEq)]
-// pub struct Error;
-
 pub (crate) const SCALE2_ROOT_OF_UNITY: [[u64; 4]; 32] = [
     [0x0000000000000001, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000],
     [0xffffffff00000000, 0x53bda402fffe5bfe, 0x3339d80809a1d805, 0x73eda753299d7d48],
@@ -46,10 +43,10 @@ pub (crate) const SCALE2_ROOT_OF_UNITY: [[u64; 4]; 32] = [
     [0x63e7cb4906ffc93f, 0xf070bb00e28a193d, 0xad1715b02e5713b5, 0x4b5371495990693f]
 ];
 
-pub fn blst_fr_from_uint64(Blst:&mut BlstFr, ptr: u64) {
-    *Blst=fr_from_uint64(ptr);
+// pub fn blst_fr_from_uint64(Blst:&mut BlstFr, ptr: u64) {
+//     *Blst=fr_from_uint64(ptr);
 
-}
+// }
 
 pub fn fft_fr (data: &Vec<BlstFr>, inverse:bool, ffts:&FFTSettings) -> Result<Vec<BlstFr>, Error>{
 
